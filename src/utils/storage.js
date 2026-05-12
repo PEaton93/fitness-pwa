@@ -13,7 +13,11 @@ export function getSettings() {
 }
 
 export function saveSettings(settings) {
-  localStorage.setItem(`${PREFIX}settings`, JSON.stringify(settings));
+  try {
+    localStorage.setItem(`${PREFIX}settings`, JSON.stringify(settings));
+  } catch {
+    console.warn("Storage quota exceeded — settings not saved");
+  }
 }
 
 export function getWorkoutLog(date = getToday()) {
@@ -25,7 +29,11 @@ export function getWorkoutLog(date = getToday()) {
 }
 
 export function saveWorkoutLog(log, date = getToday()) {
-  localStorage.setItem(`${PREFIX}workout_${date}`, JSON.stringify(log));
+  try {
+    localStorage.setItem(`${PREFIX}workout_${date}`, JSON.stringify(log));
+  } catch {
+    console.warn("Storage quota exceeded — workout log not saved");
+  }
 }
 
 export function getMealLog(date = getToday()) {
@@ -37,7 +45,11 @@ export function getMealLog(date = getToday()) {
 }
 
 export function saveMealLog(log, date = getToday()) {
-  localStorage.setItem(`${PREFIX}meals_${date}`, JSON.stringify(log));
+  try {
+    localStorage.setItem(`${PREFIX}meals_${date}`, JSON.stringify(log));
+  } catch {
+    console.warn("Storage quota exceeded — meal log not saved");
+  }
 }
 
 export function getWeeklyProgress() {
@@ -49,7 +61,11 @@ export function getWeeklyProgress() {
 }
 
 export function saveWeeklyProgress(data) {
-  localStorage.setItem(`${PREFIX}weekly`, JSON.stringify(data));
+  try {
+    localStorage.setItem(`${PREFIX}weekly`, JSON.stringify(data));
+  } catch {
+    console.warn("Storage quota exceeded — weekly progress not saved");
+  }
 }
 
 export function getCurrentWeek(planStartDate) {

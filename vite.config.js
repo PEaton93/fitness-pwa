@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/*.svg"],
+      includeAssets: ["icons/*.svg", "icons/*.png"],
       manifest: {
         name: "FitTrack - 8 Week Plan",
         short_name: "FitTrack",
@@ -21,8 +21,9 @@ export default defineConfig({
         scope: `/${REPO_NAME}/`,
         start_url: `/${REPO_NAME}/`,
         icons: [
-          { src: `/${REPO_NAME}/icons/icon.svg`, sizes: "any", type: "image/svg+xml", purpose: "any" },
-          { src: `/${REPO_NAME}/icons/icon.svg`, sizes: "any", type: "image/svg+xml", purpose: "maskable" }
+          { src: `/${REPO_NAME}/icons/icon-192.png`, sizes: "192x192", type: "image/png" },
+          { src: `/${REPO_NAME}/icons/icon-512.png`, sizes: "512x512", type: "image/png", purpose: "any maskable" },
+          { src: `/${REPO_NAME}/icons/icon.svg`, sizes: "any", type: "image/svg+xml" }
         ]
       },
       workbox: {

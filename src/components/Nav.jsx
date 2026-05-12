@@ -54,6 +54,7 @@ export default function Nav({ current, onChange }) {
       {items.map((item) => (
         <button
           key={item.id}
+          aria-label={item.label}
           className={`nav-btn ${current === item.id ? "active" : ""}`}
           onClick={() => onChange(item.id)}
         >
