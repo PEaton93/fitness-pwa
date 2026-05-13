@@ -62,6 +62,38 @@ export const WORKOUT_DAYS = {
   }
 };
 
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+export function getWorkoutDayData(planStartDate) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dow = today.getDay();
+
+  if (!planStartDate) {
+    return WORKOUT_DAYS[dow] || null;
+  }
+
+  const start = new Date(planStartDate);
+  start.setHours(0, 0, 0, 0);
+  const startDow = start.getDay();
+
+  // Days until the first Monday on or after the start date
+  const daysUntilMonday = startDow === 1 ? 0 : (8 - startDow) % 7;
+  const firstMonday = new Date(start);
+  firstMonday.setDate(start.getDate() + daysUntilMonday);
+
+  if (today >= firstMonday) {
+    return WORKOUT_DAYS[dow] || null;
+  }
+
+  // Intro partial week: Push A → Pull A → Legs by offset from start date
+  const offset = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+  const introOrder = [WORKOUT_DAYS[1], WORKOUT_DAYS[2], WORKOUT_DAYS[3]];
+  const workout = introOrder[offset];
+  if (!workout) return null;
+  return { ...workout, dayLabel: DAY_NAMES[dow] };
+}
+
 export const PROGRESSION_RULES = {
   1: "Leave 2-3 reps in reserve on every set. Focus on form.",
   2: "Leave 2-3 reps in reserve on every set. Focus on form.",

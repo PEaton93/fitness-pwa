@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { WORKOUT_DAYS, PROGRESSION_RULES } from "../data/workoutPlan.js";
+import { getWorkoutDayData, PROGRESSION_RULES } from "../data/workoutPlan.js";
 import { getWorkoutLog, saveWorkoutLog, getCurrentWeek } from "../utils/storage.js";
 
 function buildInitialLog(dayData) {
@@ -141,9 +141,8 @@ function ExerciseCard({ exercise, loggedEx, onUpdate }) {
 }
 
 export default function WorkoutPage({ settings }) {
-  const dayOfWeek = new Date().getDay();
   const currentWeek = getCurrentWeek(settings.planStartDate);
-  const dayData = WORKOUT_DAYS[dayOfWeek];
+  const dayData = getWorkoutDayData(settings.planStartDate);
 
   const [log, setLog] = useState(() => {
     const stored = getWorkoutLog();
