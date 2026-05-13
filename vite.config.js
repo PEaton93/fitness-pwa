@@ -6,6 +6,7 @@ const REPO_NAME = "fitness-pwa";
 
 export default defineConfig({
   base: process.env.NODE_ENV === "production" ? `/${REPO_NAME}/` : "/",
+  build: { outDir: "docs" },
   plugins: [
     react(),
     VitePWA({
