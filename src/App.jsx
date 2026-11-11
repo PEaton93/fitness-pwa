@@ -6,6 +6,7 @@ import SummaryPage from "./pages/SummaryPage.jsx";
 import ProgressPage from "./pages/ProgressPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import { getSettings, saveSettings } from "./utils/storage.js";
+import { logEvent } from "./lib/logger.js";
 import { requestPermission, scheduleMealNotifications } from "./utils/notifications.js";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
 
   useEffect(() => {
     window.location.hash = page;
+    logEvent("page_view", { page });
   }, [page]);
 
   useEffect(() => {
@@ -33,6 +35,15 @@ export default function App() {
     const next = { ...settings, ...updates };
     setSettings(next);
     saveSettings(next);
+  }
+
+  function handleDayComplete() {
+    const current = settings.currentDayIndex ?? 1;
+    const next = current >= 5 ? 1 : current + 1;
+    updateSettings({
+      currentDayIndex: next,
+      lastCompletedDate: new Date().toISOString().split("T")[0],
+    });
   }
 
   async function handleEnableNotifications() {
@@ -57,7 +68,7 @@ export default function App() {
       )}
 
       <main className="main-content">
-        {page === "workout" && <WorkoutPage settings={settings} />}
+        {page === "workout" && <WorkoutPage settings={settings} onDayComplete={handleDayComplete} />}
         {page === "meals" && <MealPlanPage settings={settings} />}
         {page === "summary" && <SummaryPage settings={settings} />}
         {page === "progress" && <ProgressPage settings={settings} />}

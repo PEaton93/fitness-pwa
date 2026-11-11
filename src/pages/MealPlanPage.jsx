@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { MEALS, WATER_GOAL_ML, WATER_INCREMENT_ML } from "../data/mealPlan.js";
 import { getMealLog, saveMealLog } from "../utils/storage.js";
+import { logEvent } from "../lib/logger.js";
 
 function buildInitialLog() {
   return {
@@ -125,7 +126,7 @@ function WaterTracker({ waterMl, onChange }) {
   );
 }
 
-export default function MealPlanPage() {
+export default function MealPlanPage({ settings }) {
   const [log, setLog] = useState(() => getMealLog() ?? buildInitialLog());
 
   useEffect(() => {
@@ -135,11 +136,16 @@ export default function MealPlanPage() {
   function toggleMeal(id) {
     const now = new Date();
     const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const existing = log.meals.find((m) => m.id === id);
+    const willBeLogged = existing ? !existing.logged : true;
+    if (willBeLogged) {
+      logEvent("meal_completed", { dayIndex: settings?.currentDayIndex ?? 1, mealId: id });
+    }
     setLog((prev) => ({
       ...prev,
       meals: prev.meals.map((m) =>
         m.id === id ? { ...m, logged: !m.logged, loggedAt: !m.logged ? time : null } : m
-      )
+      ),
     }));
   }
 

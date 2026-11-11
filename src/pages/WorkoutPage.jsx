@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { getWorkoutDayData, PROGRESSION_RULES } from "../data/workoutPlan.js";
+import { getCurrentDayData, getWorkoutDayData, PROGRESSION_RULES } from "../data/workoutPlan.js";
 import { getWorkoutLog, saveWorkoutLog, getCurrentWeek } from "../utils/storage.js";
+import { logEvent } from "../lib/logger.js";
 
 function buildInitialLog(dayData) {
   return {
@@ -140,9 +141,10 @@ function ExerciseCard({ exercise, loggedEx, onUpdate }) {
   );
 }
 
-export default function WorkoutPage({ settings }) {
+export default function WorkoutPage({ settings, onDayComplete }) {
+  const currentDayIndex = settings.currentDayIndex ?? 1;
   const currentWeek = getCurrentWeek(settings.planStartDate);
-  const dayData = getWorkoutDayData(settings.planStartDate);
+  const dayData = getCurrentDayData(currentDayIndex);
 
   const [log, setLog] = useState(() => {
     const stored = getWorkoutLog();
@@ -237,15 +239,28 @@ export default function WorkoutPage({ settings }) {
         );
       })}
 
-      {workoutComplete && (
-        <div className="card" style={{ borderColor: "var(--success)", textAlign: "center", padding: "20px" }}>
-          <div style={{ fontSize: 28, marginBottom: 8 }}>&#10003;</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "var(--success)" }}>Workout complete!</div>
-          <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>
-            {totalSets} sets done. Check your summary at the end of the day.
-          </div>
-        </div>
-      )}
+      <div className="card" style={workoutComplete ? { borderColor: "var(--success)", textAlign: "center", padding: "20px" } : { textAlign: "center", padding: "20px" }}>
+        {workoutComplete && (
+          <>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>&#10003;</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: "var(--success)" }}>Workout complete!</div>
+            <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>
+              {totalSets} sets done. Check your summary at the end of the day.
+            </div>
+          </>
+        )}
+        <button
+          className="btn btn-primary"
+          style={{ marginTop: workoutComplete ? 16 : 0, opacity: workoutComplete ? 1 : 0.5 }}
+          disabled={!workoutComplete}
+          onClick={() => {
+            logEvent("workout_completed", { dayIndex: currentDayIndex, exercises: log?.exercises });
+            if (onDayComplete) onDayComplete();
+          }}
+        >
+          Complete Day
+        </button>
+      </div>
     </div>
   );
 }

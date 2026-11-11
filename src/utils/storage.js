@@ -6,10 +6,26 @@ export function getToday() {
 
 export function getSettings() {
   try {
-    return JSON.parse(localStorage.getItem(`${PREFIX}settings`) || "{}");
+    const s = JSON.parse(localStorage.getItem(`${PREFIX}settings`) || "{}");
+    if (s.currentDayIndex === undefined) s.currentDayIndex = 1;
+    return s;
   } catch {
-    return {};
+    return { currentDayIndex: 1 };
   }
+}
+
+export function getCurrentDayIndex() {
+  return getSettings().currentDayIndex ?? 1;
+}
+
+export function setCurrentDayIndex(index) {
+  const s = getSettings();
+  saveSettings({ ...s, currentDayIndex: index });
+}
+
+export function setLastCompletedDate(isoDate) {
+  const s = getSettings();
+  saveSettings({ ...s, lastCompletedDate: isoDate });
 }
 
 export function saveSettings(settings) {

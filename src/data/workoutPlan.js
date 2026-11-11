@@ -62,6 +62,10 @@ export const WORKOUT_DAYS = {
   }
 };
 
+export function getCurrentDayData(index) {
+  return WORKOUT_DAYS[index] ?? null;
+}
+
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export function getWorkoutDayData(planStartDate) {
