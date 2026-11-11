@@ -148,7 +148,11 @@ export default function WorkoutPage({ settings, onDayComplete }) {
 
   const [log, setLog] = useState(() => {
     const stored = getWorkoutLog();
-    if (stored) return stored;
+    if (stored && dayData) {
+      const currentIds = new Set(dayData.exercises.map((e) => e.id));
+      const matches = stored.exercises.every((e) => currentIds.has(e.id));
+      if (matches) return stored;
+    }
     if (dayData) return buildInitialLog(dayData);
     return null;
   });
